@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfy4o2brl5o4b"]
+
+[ext_resource type="Texture2D" uid="uid://d2gacc45i4m3u" path="res://resources/icon.svg" id="1_6n6oq"]
+[ext_resource type="PackedScene" uid="uid://c6ye8nk3emdak" path="res://scenes/Player.tscn" id="2_22chy"]
+[ext_resource type="PackedScene" uid="uid://jrgtn7h5ckjh" path="res://scenes/Character.tscn" id="3_t7jnn"]
+[ext_resource type="Script" path="res://scenes/selection_box.gd" id="4_8wht2"]
+
+[node name="Main" type="Node2D"]
+position = Vector2(576, 323)
+script = ExtResource("4_8wht2")
+
+[node name="Icon" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(9.00781, 5.04688)
+texture = ExtResource("1_6n6oq")
+
+[node name="Icon" type="Sprite2D" parent="Icon"]
+visible = false
+position = Vector2(514.997, 384.793)
+scale = Vector2(9.00781, 5.04688)
+texture = ExtResource("1_6n6oq")
+
+[node name="Player" parent="." instance=ExtResource("2_22chy")]
+
+[node name="Characters" type="Node2D" parent="."]
+
+[node name="Character" parent="Characters" instance=ExtResource("3_t7jnn")]
+
+[node name="Character2" parent="Characters" instance=ExtResource("3_t7jnn")]
+position = Vector2(115, 50)
+
+[node name="SelectionBox" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
