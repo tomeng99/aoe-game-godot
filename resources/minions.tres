@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://k8prr3csd3gv"]
+
+[ext_resource type="Texture2D" uid="uid://bfaa8jyygwmca" path="res://resources/minions.png" id="1_indmb"]
+
+[resource]
+atlas = ExtResource("1_indmb")
+region = Rect2(0, 0, 16, 16)
