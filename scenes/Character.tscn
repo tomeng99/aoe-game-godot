@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://jrgtn7h5ckjh"]
 
 [ext_resource type="Script" path="res://scenes/character.gd" id="1_6msvc"]
-[ext_resource type="Texture2D" uid="uid://d2gacc45i4m3u" path="res://resources/icon.svg" id="1_a1vnv"]
+[ext_resource type="Texture2D" uid="uid://k8prr3csd3gv" path="res://resources/minions.tres" id="2_q11rq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nd2vt"]
 
@@ -16,8 +16,7 @@ script = ExtResource("1_6msvc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-4.76837e-07, 0)
-scale = Vector2(0.15625, 0.15625)
-texture = ExtResource("1_a1vnv")
+texture = ExtResource("2_q11rq")
 
 [node name="Area2D" type="Area2D" parent="."]
 

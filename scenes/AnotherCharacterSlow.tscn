@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dyfqrh1pynktn"]
 
 [ext_resource type="Script" path="res://scenes/character.gd" id="1_sh4du"]
-[ext_resource type="Texture2D" uid="uid://d2gacc45i4m3u" path="res://resources/icon.svg" id="2_ye7ow"]
+[ext_resource type="Texture2D" uid="uid://bb2vbok6qa2ys" path="res://resources/horse.tres" id="2_6743o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nd2vt"]
 
@@ -18,8 +18,7 @@ move_speed = 100.0
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-4.76837e-07, 0)
 rotation = 1.5708
-scale = Vector2(0.15625, 0.15625)
-texture = ExtResource("2_ye7ow")
+texture = ExtResource("2_6743o")
 
 [node name="Area2D" type="Area2D" parent="."]
 

@@ -15,6 +15,7 @@ func _physics_process(delta: float):
 	if distance_to_target > stop_threshold:
 		var direction = (target_position - global_position).normalized()
 		velocity = direction * move_speed
+		rotation = direction.angle() + 90
 		move_and_slide()
 	else:
 		velocity = Vector2.ZERO  # Stop moving when within the threshold
