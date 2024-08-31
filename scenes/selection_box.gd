@@ -48,7 +48,8 @@ func start_selection(position: Vector2):
 
 func update_selection(position: Vector2):
 	selection_end = position
-	selection_box.position = selection_start
+	# Sets position for the start of colorrect drawing
+	selection_box.position = Vector2(min(selection_start.x, selection_end.x), min(selection_start.y, selection_end.y)) 
 	selection_box.size = (selection_end - selection_start).abs()
 
 	for character in characters_node.get_children():
@@ -68,7 +69,7 @@ func end_selection(position: Vector2):
 	update_selection(position)
 
 func get_selection_rect() -> Rect2:
-	return Rect2(selection_start, selection_end - selection_start).abs()
+	return Rect2(selection_box.position, selection_box.size).abs()
 
 func move_selected_characters(target_position: Vector2):
 	for character in selected_characters:
@@ -95,7 +96,7 @@ func _on_button_pressed():
 		
 	characters_node.add_child(scene_instance)
 			# Notify all clients to add this character to their Characters node
-	rpc("rpc_add_character", scene_instance.global_position)
+	rpc_add_character.rpc(scene_instance.global_position)
 		
 		
 @rpc("any_peer")
