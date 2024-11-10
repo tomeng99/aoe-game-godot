@@ -14,3 +14,7 @@ config/name="AOE-Clone"
 run/main_scene="res://scenes/Menu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://resources/icon.svg"
+
+[display]
+
+window/size/resizable=false

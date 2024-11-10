@@ -43,6 +43,7 @@ offset_left = 346.0
 offset_top = 240.0
 offset_right = 813.0
 offset_bottom = 280.0
+text = "localhost"
 placeholder_text = "IP"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
