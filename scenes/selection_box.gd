@@ -52,8 +52,9 @@ func update_selection(position: Vector2):
 	selection_box.position = Vector2(min(selection_start.x, selection_end.x), min(selection_start.y, selection_end.y))
 	selection_box.size = (selection_end - selection_start).abs()
 
+	#print("Update selection")
 	for character in characters_node.get_children():
-		print(character)
+		#print(character)
 		if get_selection_rect().has_point(character.global_position):
 			character.select()
 			if character not in selected_characters:
@@ -84,17 +85,18 @@ func deselect_all_characters():
 func _on_button_pressed():
 	# Notify all clients to add this character to their Characters node
 	rpc_add_character.rpc(Vector2(randf() * 500, randf() * 500), multiplayer.get_unique_id())
-		
-		
-@rpc("call_local", "any_peer")
+
+@rpc("any_peer", "call_local")
 func rpc_add_character(position, authority):
+	if !multiplayer.is_server():
+		return
 	print("Is server:", multiplayer.is_server())
 	var scene_instance = player_scene.instantiate()
-	scene_instance.global_position = position 
+	scene_instance.global_position = position
 		
 	# Ensure authority is set correctly
-	scene_instance.set_multiplayer_authority(authority)
-	print("spawned minion for ", authority, " on ", multiplayer.get_unique_id())
+	#scene_instance.set_multiplayer_authority(authority)
+	#print("spawned minion for ", authority, " on ", multiplayer.get_unique_id())
 		
 	# Add MultiplayerSynchronizer if needed
 	if not scene_instance.has_node("MultiplayerSynchronizer"):
