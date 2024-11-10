@@ -1,7 +1,0 @@
-[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://bb2vbok6qa2ys"]
-
-[ext_resource type="Texture2D" uid="uid://bfaa8jyygwmca" path="res://resources/minions.png" id="1_eu8i0"]
-
-[resource]
-atlas = ExtResource("1_eu8i0")
-region = Rect2(16, 0, 16, 16)

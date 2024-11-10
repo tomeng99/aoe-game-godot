@@ -10,11 +10,13 @@ config_version=5
 
 [application]
 
-config/name="AOE-Clone"
-run/main_scene="res://scenes/Menu.tscn"
+config/name="MPLobby"
+run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://resources/icon.svg"
+config/icon="res://scenes/icon.svg"
 
 [display]
 
+window/size/viewport_width=1200
+window/size/viewport_height=600
 window/size/resizable=false
