@@ -4,6 +4,7 @@ var pending_spawns = []
 
 @rpc("any_peer", "call_local")
 func rpc_request_spawn(position, authority):
+	# check if allowed to do stuff?
 	print("rpc_request_spawn called with position:", position, " authority:", authority)
 	if multiplayer.is_server():
 		print("Server received spawn request, calling rpc_add_character")
@@ -21,9 +22,6 @@ func rpc_add_character(position, authority):
 	if player_node:
 		print("Found player node, spawning character")
 		_spawn_character(player_node, position, authority)
-	else:
-		print("Player node not found, queueing spawn")
-		pending_spawns.append({ "position": position, "authority": authority })
 
 func _add_player(id):
 	var player = preload("res://scenes/Player.tscn").instantiate()
@@ -44,19 +42,3 @@ func _spawn_character(player_node, position, authority):
 	scene_instance.set_multiplayer_authority(authority)
 	characters_node.add_child(scene_instance)
 	print("Character spawned successfully for player:", authority)
-
-func _process(delta):
-	if not pending_spawns.is_empty():
-		print("Trying to process pending spawns...")
-	var still_pending = []
-	for spawn in pending_spawns:
-		var player_path = "/root/Menu/Player_" + str(spawn.authority)
-		var player_node = get_tree().get_root().get_node_or_null(player_path)
-
-		if player_node:
-			print("Found player:", player_path)
-			_spawn_character(player_node, spawn.position, spawn.authority)
-		else:
-			print("Player not found:", player_path)
-			still_pending.append(spawn)
-	pending_spawns = still_pending
