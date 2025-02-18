@@ -62,7 +62,6 @@ func update_selection(position: Vector2):
 	selection_box.size = (selection_end - selection_start).abs()
 
 	for character in characters_node.get_children():
-		print(character)
 		if get_selection_rect().has_point(character.global_position):
 			character.select()
 			if character not in selected_characters:
