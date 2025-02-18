@@ -15,6 +15,7 @@ radius = 19.4165
 script = ExtResource("1_j78od")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+texture_filter = 1
 offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("2_vf6d0")
