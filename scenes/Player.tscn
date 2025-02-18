@@ -32,4 +32,11 @@ offset_bottom = 8.0
 text = "Add Character"
 metadata/_edit_use_anchors_ = true
 
+[node name="Points" type="Label" parent="."]
+offset_left = 984.0
+offset_right = 1150.0
+offset_bottom = 23.0
+text = "0"
+horizontal_alignment = 2
+
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -18,6 +18,8 @@ func _ready():
 		print("Successfully found spawner at:", spawner_path)
 	else:
 		push_error("MultiplayerSpawner not found at path: " + spawner_path)
+	if !is_multiplayer_authority():
+		$Points.visible = false
 
 @onready var spawner: Node
 
