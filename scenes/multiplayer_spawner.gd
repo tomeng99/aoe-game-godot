@@ -31,16 +31,9 @@ func _add_player(id):
 	player.set_multiplayer_authority(id)
 
 	# Add player to the root node (not spawner!)
-	get_tree().root.get_node("root").add_child(player)
+	get_tree().root.get_node("Menu").add_child(player)
 
 	print("Added player:", player.name)
-
-	# Check if any pending spawns are waiting for this player
-	_process_pending_spawns_for(id)
-
-
-	# Check if any pending spawns are waiting for this player
-	_process_pending_spawns_for(id)
 
 func _spawn_character(player_node, position, authority):
 	print("_spawn_character called")
@@ -52,22 +45,6 @@ func _spawn_character(player_node, position, authority):
 	characters_node.add_child(scene_instance)
 	print("Character spawned successfully for player:", authority)
 
-func _process_pending_spawns_for(authority):
-	var still_pending = []
-	for spawn in pending_spawns:
-		if spawn.authority == authority:
-			var player_path = "/root/Menu/Player_" + str(authority)
-			var player_node = get_tree().get_root().get_node_or_null(player_path)
-			if player_node:
-				print("Found player:", player_path)
-				_spawn_character(player_node, spawn.position, spawn.authority)
-			else:
-				print("Player not found:", player_path)
-				still_pending.append(spawn)
-		else:
-			still_pending.append(spawn)
-	pending_spawns = still_pending
-	
 func _process(delta):
 	if not pending_spawns.is_empty():
 		print("Trying to process pending spawns...")
