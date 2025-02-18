@@ -9,11 +9,20 @@ var selected_characters: Array = []
 @onready var characters_node = $Characters  # The parent node where new characters will be added
 @export var player_scene: PackedScene # The parent node where new characters will be added
 
-
 func _ready():
-	selection_box.visible = false
+	# Auto-locate the spawner when the player is created
+	var spawner_path = "/root/Menu/MultiplayerSpawner"  # Path includes Menu node
+	var spawner_node = get_node_or_null(spawner_path)
+	if spawner_node:
+		spawner = spawner_node
+		print("Successfully found spawner at:", spawner_path)
+	else:
+		push_error("MultiplayerSpawner not found at path: " + spawner_path)
+
+@onready var spawner: Node
 
 func _enter_tree():
+	print(name)
 	set_multiplayer_authority(name.to_int())  # Ensure authority is set based on the player ID
 
 func _input(event):
@@ -80,27 +89,20 @@ func deselect_all_characters():
 	for character in selected_characters:
 		character.deselect()
 	selected_characters.clear()
-	
+
 func _on_button_pressed():
-	# Notify all clients to add this character to their Characters node
-	rpc_add_character.rpc(Vector2(randf() * 500, randf() * 500), multiplayer.get_unique_id())
-		
-		
-@rpc("call_local", "any_peer")
-func rpc_add_character(position, authority):
-	print("Is server:", multiplayer.is_server())
-	var scene_instance = player_scene.instantiate()
-	scene_instance.global_position = position 
-		
-	# Ensure authority is set correctly
-	scene_instance.set_multiplayer_authority(authority)
-	print("spawned minion for ", authority, " on ", multiplayer.get_unique_id())
-		
-	# Add MultiplayerSynchronizer if needed
-	if not scene_instance.has_node("MultiplayerSynchronizer"):
-		var sync = MultiplayerSynchronizer.new()
-		sync.name = "MultiplayerSynchronizer"
-		scene_instance.add_child(sync)
-		
-	print(characters_node)
-	characters_node.add_child(scene_instance)
+	print("Button pressed - attempting to spawn character")
+	var position = Vector2(randf() * 500, randf() * 500)
+	var my_id = multiplayer.get_unique_id()
+	print("My ID:", my_id)
+
+	if spawner:
+		print("Spawner found, requesting spawn at position:", position)
+		if multiplayer.is_server():
+			print("Running as server, calling rpc_request_spawn directly")
+			spawner.rpc_request_spawn(position, my_id)  # Direct local call
+		else:
+			print("Running as client, sending spawn request to server")
+			spawner.rpc_id(1, "rpc_request_spawn", position, my_id)
+	else:
+		push_error("Spawner is not assigned in SelectionBox!")
