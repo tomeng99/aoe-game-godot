@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://3ichjw7xs355"]
+
+[node name="Scoreboard" type="Node2D"]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/Score.tscn")
+spawn_path = NodePath("..")
+
+[node name="Label" type="Label" parent="."]
+offset_top = 54.0
+offset_right = 89.0
+offset_bottom = 77.0
+text = "Scoreboard"

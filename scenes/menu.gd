@@ -16,6 +16,9 @@ func _on_host_pressed():
 	var apple = preload("res://scenes/apple.tscn").instantiate()
 	apple.global_position = Vector2(100, 100)
 	add_child(apple)
+	var scoreboard = preload("res://scenes/Scoreboard.tscn").instantiate()
+	#scoreboard.global_position = Vector2(100, 100)
+	add_child(scoreboard)
 	
 	# Then add the local player
 	_add_player(multiplayer.get_unique_id())
