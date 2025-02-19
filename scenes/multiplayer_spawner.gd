@@ -15,23 +15,14 @@ func rpc_request_spawn(position, authority):
 @rpc("call_local", "authority")
 func rpc_add_character(position, authority):
 	print("rpc_add_character called with position:", position, " authority:", authority)
+	
 	var player_path = "/root/Menu/Player_" + str(authority)
 	var player_node = get_tree().get_root().get_node_or_null(player_path)
 	print("Looking for player at path:", player_path)
-
+	
 	if player_node:
 		print("Found player node, spawning character")
 		_spawn_character(player_node, position, authority)
-
-func _add_player(id):
-	var player = preload("res://scenes/Player.tscn").instantiate()
-	player.name = "Player_" + str(id)
-	player.set_multiplayer_authority(id)
-
-	# Add player to the root node (not spawner!)
-	get_tree().root.get_node("Menu").add_child(player)
-
-	print("Added player:", player.name)
 
 func _spawn_character(player_node, position, authority):
 	print("_spawn_character called")

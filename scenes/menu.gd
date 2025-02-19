@@ -17,7 +17,7 @@ func _on_host_pressed():
 	apple.global_position = Vector2(100, 100)
 	add_child(apple)
 	var scoreboard = preload("res://scenes/Scoreboard.tscn").instantiate()
-	#scoreboard.global_position = Vector2(100, 100)
+	scoreboard.global_position = Vector2(800, 100)
 	add_child(scoreboard)
 	
 	# Then add the local player
@@ -29,6 +29,19 @@ func _add_player(id):
 	player.name = "Player_" + str(id)
 	player.set_multiplayer_authority(id)
 	add_child(player)
+	
+	# Set up scoreboard
+	var scoreboard_points_node = get_tree().get_root().get_node_or_null("/root/Menu/Scoreboard/PanelContainer/Entries/Points")
+	var points_name = "Points_" + str(id)
+	var points_node = preload("res://scenes/Score.tscn").instantiate()
+	points_node.text = "0"
+	points_node.name = points_name
+	scoreboard_points_node.add_child(points_node)
+	var scoreboard_names_node = get_tree().get_root().get_node_or_null("/root/Menu/Scoreboard/PanelContainer/Entries/Names")
+	var name_label = preload("res://scenes/Score.tscn").instantiate()
+	name_label.text = str(id)
+	name_label.name = points_name
+	scoreboard_names_node.add_child(name_label)
 
 func _on_join_pressed():
 	# Set up client

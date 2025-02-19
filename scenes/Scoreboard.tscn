@@ -1,13 +1,49 @@
-[gd_scene format=3 uid="uid://3ichjw7xs355"]
+[gd_scene load_steps=2 format=3 uid="uid://3ichjw7xs355"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_iwucg"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="Scoreboard" type="Node2D"]
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_iwucg")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Entries" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Names" type="VBoxContainer" parent="PanelContainer/Entries"]
+layout_mode = 2
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PanelContainer/Entries/Names"]
 _spawnable_scenes = PackedStringArray("res://scenes/Score.tscn")
 spawn_path = NodePath("..")
 
-[node name="Label" type="Label" parent="."]
-offset_top = 54.0
-offset_right = 89.0
-offset_bottom = 77.0
-text = "Scoreboard"
+[node name="Header" type="Label" parent="PanelContainer/Entries/Names"]
+layout_mode = 2
+text = "Name"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/Entries/Names"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/Entries"]
+layout_mode = 2
+
+[node name="Points" type="VBoxContainer" parent="PanelContainer/Entries"]
+layout_mode = 2
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PanelContainer/Entries/Points"]
+_spawnable_scenes = PackedStringArray("res://scenes/Score.tscn")
+spawn_path = NodePath("..")
+
+[node name="Header" type="Label" parent="PanelContainer/Entries/Points"]
+layout_mode = 2
+text = "Points"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/Entries/Points"]
+layout_mode = 2
