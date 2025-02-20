@@ -21,8 +21,6 @@ metadata/_edit_use_anchors_ = true
 
 [node name="SelectionBox" type="ColorRect" parent="Control"]
 layout_mode = 0
-offset_right = 1149.0
-offset_bottom = 648.0
 color = Color(0, 0.198906, 0.198906, 0.145098)
 metadata/_edit_use_anchors_ = true
 
