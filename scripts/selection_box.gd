@@ -15,7 +15,7 @@ func _ready():
 	var spawner_node = get_node_or_null(spawner_path)
 	if spawner_node:
 		spawner = spawner_node
-		print("Successfully found spawner at:", spawner_path)
+		#print("Successfully found spawner at:", spawner_path)
 	else:
 		push_error("MultiplayerSpawner not found at path: " + spawner_path)
 	if !is_multiplayer_authority():

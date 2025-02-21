@@ -14,6 +14,7 @@ var tracked_players = {}
 var extracted_resource = 0
 
 func _ready() -> void:
+	print("Create resource")
 	apply_texture();
 	$Area2D.body_entered.connect(_on_enter)
 	$Area2D.body_exited.connect(_on_exit)
@@ -42,8 +43,7 @@ func _check_players():
 				update_scoreboard(player)
 				extracted_resource += 1				
 				if extracted_resource >= total_resource_amount:
-					pass
-					# TODO  despawn_resource() I did not get this to work with mp :))
+					despawn_resource()
 
 func update_scoreboard(body: Node2D):
 	var scoreboard_points_node = get_tree().get_root().get_node_or_null("/root/Menu/Scoreboard/PanelContainer/Entries/Points")

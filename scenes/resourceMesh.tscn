@@ -6,3 +6,10 @@
 [node name="ResourceMesh" type="Node2D"]
 script = ExtResource("1_rrr1a")
 resource_scene = ExtResource("2_0grkb")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/resource.tscn")
+spawn_path = NodePath("..")
+
+[node name="resource" parent="." instance=ExtResource("2_0grkb")]
+resource_name = "gold"
