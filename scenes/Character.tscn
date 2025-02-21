@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://jrgtn7h5ckjh"]
 
-[ext_resource type="Script" path="res://scenes/character.gd" id="1_6msvc"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="1_6msvc"]
 [ext_resource type="Texture2D" uid="uid://k8prr3csd3gv" path="res://resources/minions.tres" id="2_q11rq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nd2vt"]
@@ -9,6 +9,9 @@
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="Character" type="CharacterBody2D"]
 position = Vector2(94, 50)

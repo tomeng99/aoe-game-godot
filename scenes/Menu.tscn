@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b0enmd52uw1gw"]
 
-[ext_resource type="Script" path="res://scenes/menu.gd" id="1_a28gd"]
-[ext_resource type="Script" path="res://scenes/multiplayer_spawner.gd" id="3_msxbj"]
+[ext_resource type="Script" path="res://scripts/menu.gd" id="1_a28gd"]
+[ext_resource type="Script" path="res://scripts/multiplayer_spawner.gd" id="3_msxbj"]
 
 [node name="Menu" type="Node2D"]
 script = ExtResource("1_a28gd")
@@ -46,7 +46,7 @@ text = "localhost"
 placeholder_text = "IP"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://scenes/Player.tscn", "res://scenes/Character.tscn", "res://scenes/AnotherCharacterSlow.tscn", "res://scenes/apple.tscn", "res://scenes/Scoreboard.tscn")
+_spawnable_scenes = PackedStringArray("res://scenes/Player.tscn", "res://scenes/Character.tscn", "res://scenes/AnotherCharacterSlow.tscn", "res://scenes/Scoreboard.tscn", "res://scenes/resource.tscn", "res://scenes/resourceMesh.tscn")
 spawn_path = NodePath("..")
 script = ExtResource("3_msxbj")
 

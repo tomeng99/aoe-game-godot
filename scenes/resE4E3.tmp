@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bseifa0o1qyfy"]
+
+[ext_resource type="Script" path="res://scripts/resource_mesh.gd" id="1_rrr1a"]
+[ext_resource type="PackedScene" uid="uid://8fxf5owjw5hj" path="res://scenes/resource.tscn" id="2_0grkb"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_d30w0"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="ResourceMesh" type="Node2D"]
+position = Vector2(590, 302)
+script = ExtResource("1_rrr1a")
+resource_scene = ExtResource("2_0grkb")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_d30w0")

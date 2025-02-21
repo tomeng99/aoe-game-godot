@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://8fxf5owjw5hj"]
+[gd_scene load_steps=6 format=3 uid="uid://8fxf5owjw5hj"]
 
-[ext_resource type="Script" path="res://scenes/apple.gd" id="1_j78od"]
-[ext_resource type="Texture2D" uid="uid://conpdhhjpr1gn" path="res://resources/apple.png" id="2_vf6d0"]
+[ext_resource type="Script" path="res://scripts/resource.gd" id="1_pgwip"]
+[ext_resource type="Texture2D" uid="uid://dsohcnf1pue0p" path="res://resources/gold.png" id="2_fehw4"]
+[ext_resource type="Texture2D" uid="uid://curms3lih3rmv" path="res://resources/iron.png" id="3_161sq"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_gq58j"]
 properties/0/path = NodePath(".:position")
@@ -11,14 +12,10 @@ properties/0/replication_mode = 1
 [sub_resource type="CircleShape2D" id="CircleShape2D_xh3va"]
 radius = 19.4165
 
-[node name="Apple" type="Node2D"]
-script = ExtResource("1_j78od")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-texture_filter = 1
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("2_vf6d0")
+[node name="resource" type="Node2D"]
+script = ExtResource("1_pgwip")
+gold_texture = ExtResource("2_fehw4")
+iron_texture = ExtResource("3_161sq")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_gq58j")
@@ -28,3 +25,5 @@ replication_config = SubResource("SceneReplicationConfig_gq58j")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(19, 19)
 shape = SubResource("CircleShape2D_xh3va")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

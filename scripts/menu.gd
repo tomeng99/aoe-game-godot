@@ -13,9 +13,8 @@ func _on_host_pressed():
 	# Add the main scene first
 	#var main = main_scene.instantiate()
 	#add_child(main)
-	var apple = preload("res://scenes/apple.tscn").instantiate()
-	apple.global_position = Vector2(100, 100)
-	add_child(apple)
+	var resources = preload("res://scenes/resourceMesh.tscn").instantiate()
+	add_child(resources)
 	var scoreboard = preload("res://scenes/Scoreboard.tscn").instantiate()
 	scoreboard.global_position = Vector2(800, 100)
 	add_child(scoreboard)
