@@ -4,8 +4,7 @@ extends Camera2D
 @export var map_width: float = 5000.0
 @export var map_height: float = 5000.0
 
-# Reference to the Player node (parent of Camera)
-@onready var player = get_parent()  # ✅ Player is the parent of the camera
+@onready var player = get_parent()
 
 func _process(delta: float) -> void:
 	var direction = Vector2.ZERO
