@@ -47,33 +47,50 @@ func handle_input(event):
 		update_selection(event.position)
 		
 		
-	if event is InputEventKey and KEY_DELETE and event.pressed:
+	if event is InputEventKey and event.keycode == KEY_DELETE and event.pressed:
 		for character in selected_characters:
 			delete_char(character.get_path())
 		selected_characters = []
 
 
-	if event.is_action_pressed("ui_cancel"):  # Esc key to deselect all
+	if event.is_action_pressed("ui_cancel"):
 		deselect_all_characters()
 
 func start_selection(position: Vector2):
-	selection_start = position
-	selection_end = position
+	selection_start = get_global_mouse_position()
+	selection_end = selection_start
 	selecting = true
 	selection_box.visible = true
+
 	selection_box.position = selection_start
 	selection_box.size = Vector2.ZERO
 
+
+
+
 func update_selection(position: Vector2):
-	selection_end = position
-	# Sets position for the start of colorrect drawing
-	selection_box.position = Vector2(min(selection_start.x, selection_end.x), min(selection_start.y, selection_end.y))
-	selection_box.size = (selection_end - selection_start).abs()
+	selection_end = get_global_mouse_position()
+
+	var world_start = selection_start
+	var world_end = selection_end
+
+	var selection_rect = Rect2(
+		Vector2(
+			min(world_start.x, world_end.x),
+			min(world_start.y, world_end.y)
+		),
+		(world_end - world_start).abs()
+	)
+
+	selection_box.position = get_viewport_transform() * selection_rect.position
+	selection_box.size = selection_rect.size
 
 	var characters_node = get_tree().get_root().get_node_or_null("/root/Menu/characters")
-	if (characters_node != null):
+	if characters_node:
 		for character in characters_node.get_children():
-			if get_selection_rect().has_point(character.global_position) && character.get_multiplayer_authority() == multiplayer.get_unique_id() :
+			var character_pos = character.global_position
+
+			if selection_rect.has_point(character_pos) and character.get_multiplayer_authority() == multiplayer.get_unique_id():
 				character.select()
 				if character not in selected_characters:
 					selected_characters.append(character)
@@ -81,6 +98,9 @@ func update_selection(position: Vector2):
 				character.deselect()
 				if character in selected_characters:
 					selected_characters.erase(character)
+
+
+
 
 func end_selection(position: Vector2):
 	selection_end = position
@@ -92,8 +112,11 @@ func get_selection_rect() -> Rect2:
 	return Rect2(selection_box.position, selection_box.size).abs()
 
 func move_selected_characters(target_position: Vector2):
+	var world_target = get_global_mouse_position()
+	print("Moving characters to:", world_target)
+
 	for character in selected_characters:
-		character.move_to(target_position)
+		character.move_to(world_target)
 
 func deselect_all_characters():
 	for character in selected_characters:
