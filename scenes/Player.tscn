@@ -10,8 +10,6 @@ script = ExtResource("2_3f5gh")
 offset = Vector2(575, 328)
 script = ExtResource("1_rsto3")
 
-[node name="Characters" type="Node2D" parent="."]
-
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0

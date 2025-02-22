@@ -6,7 +6,7 @@ var selecting: bool = false
 var selected_characters: Array = []
 
 @onready var selection_box: ColorRect = $Control/SelectionBox
-@onready var characters_node = $Characters  # The parent node where new characters will be added
+@onready var characters_node: Node2D  # The parent node where new characters will be added
 @export var player_scene: PackedScene # The parent node where new characters will be added
 
 func _ready():
@@ -45,6 +45,13 @@ func handle_input(event):
 
 	if event is InputEventMouseMotion and selecting:
 		update_selection(event.position)
+		
+		
+	if event is InputEventKey and KEY_DELETE and event.pressed:
+		for character in selected_characters:
+			delete_char(character.get_path())
+		selected_characters = []
+
 
 	if event.is_action_pressed("ui_cancel"):  # Esc key to deselect all
 		deselect_all_characters()
@@ -63,15 +70,18 @@ func update_selection(position: Vector2):
 	selection_box.position = Vector2(min(selection_start.x, selection_end.x), min(selection_start.y, selection_end.y))
 	selection_box.size = (selection_end - selection_start).abs()
 
-	for character in characters_node.get_children():
-		if get_selection_rect().has_point(character.global_position):
-			character.select()
-			if character not in selected_characters:
-				selected_characters.append(character)
-		else:
-			character.deselect()
-			if character in selected_characters:
-				selected_characters.erase(character)
+	var characters_node = get_tree().get_root().get_node_or_null("/root/Menu/characters")
+	print(characters_node)
+	if (characters_node != null):
+		for character in characters_node.get_children():
+			if get_selection_rect().has_point(character.global_position) && character.get_multiplayer_authority() == multiplayer.get_unique_id() :
+				character.select()
+				if character not in selected_characters:
+					selected_characters.append(character)
+			else:
+				character.deselect()
+				if character in selected_characters:
+					selected_characters.erase(character)
 
 func end_selection(position: Vector2):
 	selection_end = position
@@ -107,3 +117,6 @@ func _on_button_pressed():
 			spawner.rpc_id(1, "rpc_request_spawn", position, my_id)
 	else:
 		push_error("Spawner is not assigned in SelectionBox!")
+
+func delete_char(char):
+	spawner.rpc_request_delete(char, multiplayer.get_unique_id())
