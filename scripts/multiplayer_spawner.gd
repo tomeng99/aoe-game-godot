@@ -42,7 +42,6 @@ func rpc_request_delete(char_path: NodePath, authority):
 func rpc_delete_character(char_path: NodePath):
 	var char = get_node_or_null(char_path)
 	if char and char.is_inside_tree():
-		print("Removing character:", char.name)
 		char.queue_free()
 	else:
 		print("Character not found or already deleted!")

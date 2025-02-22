@@ -71,7 +71,6 @@ func update_selection(position: Vector2):
 	selection_box.size = (selection_end - selection_start).abs()
 
 	var characters_node = get_tree().get_root().get_node_or_null("/root/Menu/characters")
-	print(characters_node)
 	if (characters_node != null):
 		for character in characters_node.get_children():
 			if get_selection_rect().has_point(character.global_position) && character.get_multiplayer_authority() == multiplayer.get_unique_id() :
