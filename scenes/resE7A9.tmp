@@ -27,6 +27,9 @@ properties/1/replication_mode = 1
 [node name="ResourceMesh" type="TileMapLayer"]
 tile_set = SubResource("TileSet_dhg5i")
 script = ExtResource("1_rrr1a")
+resource_data = null
+gold_tile_id = null
+iron_tile_id = null
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("..")

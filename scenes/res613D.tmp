@@ -17,18 +17,13 @@ sources/0 = SubResource("TileSetAtlasSource_af5g8")
 sources/1 = SubResource("TileSetAtlasSource_xaiiu")
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7ydfd"]
-properties/0/path = NodePath(".:resource_data")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:position")
-properties/1/spawn = true
-properties/1/replication_mode = 1
 
 [node name="ResourceMesh" type="TileMapLayer"]
 tile_set = SubResource("TileSet_dhg5i")
 script = ExtResource("1_rrr1a")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/resource.tscn")
 spawn_path = NodePath("..")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

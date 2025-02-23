@@ -100,8 +100,6 @@ func update_selection(position: Vector2):
 					selected_characters.erase(character)
 
 
-
-
 func end_selection(position: Vector2):
 	selection_end = position
 	selecting = false
