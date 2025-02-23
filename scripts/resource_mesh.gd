@@ -3,6 +3,8 @@ extends TileMapLayer
 @onready var multiplayer_synchronizer: MultiplayerSynchronizer = $MultiplayerSynchronizer
 
 @export var resource_data: Dictionary = {}
+@export var resource_updates: Dictionary = {}
+
 @export var tracked_characters: Dictionary = {}
 
 # TODO Should probably be handled in some type of layer config and not in code
@@ -12,10 +14,19 @@ extends TileMapLayer
 @export var total_resource_amount: int = 5
 @export var required_time: int = 2
 
+var noise = FastNoiseLite.new()
+
+@export var map_size: Vector2i = Vector2i(100, 100)
+@export var noise_scale: float = 5.0
+@export var gold_threshold: float = 0.4
+@export var iron_threshold: float = -0.4
+
 func _ready():
 	if multiplayer.is_server():
-		spawn_resource("iron", Vector2i(5, 5))
-		spawn_resource("gold", Vector2i(10, 5))
+		noise.seed = randi()
+		noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+		noise.frequency = 1.0 / noise_scale
+		spawn_resources_with_noise()
 
 	var check_timer = Timer.new()
 	check_timer.wait_time = 1
@@ -28,26 +39,38 @@ func spawn_resource(resource_type: String, tile_position: Vector2i):
 	if tile_id != -1:
 		set_cell(tile_position, tile_id, Vector2i(0, 0))
 		resource_data[tile_position] = {"tile_id": tile_id, "remaining": total_resource_amount}
+		resource_updates[tile_position] = tile_id 
 
 		if multiplayer_synchronizer:
 			multiplayer_synchronizer.notify_property_list_changed()
 
-		print("Spawned", resource_type, "at:", tile_position)
-	else:
-		print("Error: Could not find tile for", resource_type)
+		
+func spawn_resources_with_noise():
+	for x in range(map_size.x):
+		for y in range(map_size.y):
+			var noise_value = noise.get_noise_2d(x / noise_scale, y / noise_scale)
+			
+			if noise_value > gold_threshold:
+				spawn_resource("gold", Vector2i(x, y))
+			elif noise_value < iron_threshold:
+				spawn_resource("iron", Vector2i(x, y))
 
 func _process(_delta):
 	if multiplayer.is_server():
 		check_character_positions()
 		return
 
-	for tile_position in resource_data.keys():
-		var tile_info = resource_data[tile_position]
-		
-		if tile_info["tile_id"] == -1:
-			set_cell(tile_position, -1)
-		else:
-			set_cell(tile_position, tile_info["tile_id"], Vector2i(0, 0))
+	# ✅ Only update tiles when `resource_updates` has changes
+	if resource_updates.size() > 0:
+		for tile_position in resource_updates.keys():
+			var tile_id = resource_updates[tile_position]
+
+			if tile_id == -1:
+				set_cell(tile_position, -1)
+			else:
+				set_cell(tile_position, tile_id, Vector2i(0, 0))
+
+		resource_updates.clear()
 
 func check_character_positions():
 	var characters_node = get_tree().get_root().get_node_or_null("/root/Menu/characters")
@@ -102,14 +125,13 @@ func remove_resource(tile_position: Vector2i):
 	print("Server removing resource at:", tile_position)
 
 	set_cell(tile_position, -1)
+	resource_updates[tile_position] = -1
 
 	if tile_position in resource_data:
 		resource_data.erase(tile_position)
 
 	if multiplayer_synchronizer:
 		multiplayer_synchronizer.notify_property_list_changed()
-
-	print("Resource at", tile_position, "fully removed!")
 
 func update_scoreboard(player: Node2D):
 	var scoreboard_points_node = get_tree().get_root().get_node_or_null("/root/Menu/Scoreboard/PanelContainer/Entries/Points")

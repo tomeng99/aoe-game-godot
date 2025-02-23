@@ -66,8 +66,6 @@ func start_selection(position: Vector2):
 	selection_box.size = Vector2.ZERO
 
 
-
-
 func update_selection(position: Vector2):
 	selection_end = get_global_mouse_position()
 

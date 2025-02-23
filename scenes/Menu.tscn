@@ -46,7 +46,7 @@ text = "localhost"
 placeholder_text = "IP"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://scenes/Player.tscn", "res://scenes/Character.tscn", "res://scenes/AnotherCharacterSlow.tscn", "res://scenes/Scoreboard.tscn", "res://scenes/resource.tscn", "res://scenes/resourceMesh.tscn")
+_spawnable_scenes = PackedStringArray("res://scenes/Player.tscn", "res://scenes/Character.tscn", "res://scenes/AnotherCharacterSlow.tscn", "res://scenes/Scoreboard.tscn", "res://scenes/resourceMesh.tscn")
 spawn_path = NodePath("..")
 script = ExtResource("3_msxbj")
 
