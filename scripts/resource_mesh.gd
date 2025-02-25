@@ -68,6 +68,7 @@ func _ready():
 
 func queue_update(pos: Vector2i, data: Dictionary, is_terrain: bool = true):
 	var chunk_pos = Vector2i(pos.x / chunk_size.x, pos.y / chunk_size.y)
+	print("[Server] Queueing update for chunk: ", chunk_pos, " tile: ", pos, " data: ", data)
 	
 	if not pending_updates.has(chunk_pos):
 		pending_updates[chunk_pos] = {"terrain": {}, "resources": {}}
@@ -78,6 +79,24 @@ func queue_update(pos: Vector2i, data: Dictionary, is_terrain: bool = true):
 		pending_updates[chunk_pos]["terrain"][pos] = data
 	else:
 		pending_updates[chunk_pos]["resources"][pos] = data
+		print("[Server] Added resource update to pending updates: ", pending_updates[chunk_pos])
+
+func _physics_process(delta):
+	if not multiplayer.is_server():
+		return
+		
+	if not initial_sync_complete:
+		_handle_initial_sync()
+		return
+	
+	# Process dirty chunks
+	if not dirty_chunks.is_empty():
+		var chunk_pos = dirty_chunks[0]
+		if pending_updates.has(chunk_pos):
+			print("[Server] Sending updates for chunk: ", chunk_pos, " updates: ", pending_updates[chunk_pos])
+			_apply_chunk_updates.rpc(pending_updates[chunk_pos])
+			pending_updates.erase(chunk_pos)
+		dirty_chunks.remove_at(0)
 
 func _prepare_full_map_sync():
 	chunks_to_sync.clear()
@@ -135,7 +154,9 @@ func _process(_delta):
 			current_chunk_position = Vector2i(-1, -1)
 			current_chunk_updates.clear()
 
+@rpc("any_peer", "call_local", "reliable")
 func _apply_chunk_updates(updates: Dictionary):
+	print("Applying chunk updates for client....")
 	if updates.has("terrain"):
 		for pos in updates.terrain:
 			terrain_data[pos] = updates.terrain[pos]
@@ -144,9 +165,16 @@ func _apply_chunk_updates(updates: Dictionary):
 
 	if updates.has("resources"):
 		for pos in updates.resources:
-			resource_data[pos] = updates.resources[pos]
-			var data = resource_data[pos]
-			resource_layer.set_cell(pos, data.source_id, data.atlas_coords)
+			var data = updates.resources[pos]
+			if data.source_id == -1:
+				# Resource was removed
+				resource_layer.erase_cell(pos)
+				if pos in resource_data:
+					resource_data.erase(pos)
+			else:
+				# Resource was updated or added
+				resource_data[pos] = data
+				resource_layer.set_cell(pos, data.source_id, data.atlas_coords)
 
 func load_tile_ids():
 	var tile_map_set = terrain_layer.tile_set
@@ -172,9 +200,9 @@ func generate_terrain():
 			var noise_value = noise.get_noise_2d(float(x) / noise_scale, float(y) / noise_scale)
 			
 			var tile_type = "grass"
-			if noise_value < -0.2:  # Was -0.5, increased to create more water
+			if noise_value < -0.2:  # Increased to create more water
 				tile_type = "water"
-			elif noise_value < 0.0:  # Was -0.2, adjusted to maintain good beach size
+			elif noise_value < 0.0:  # Beaches
 				tile_type = "sand"
 			
 			var tile_data = resource_tile_ids.get(tile_type, null)
@@ -343,3 +371,37 @@ func remove_resource(tile_position: Vector2i):
 
 	if tile_position in resource_data:
 		resource_data.erase(tile_position)
+
+func _handle_initial_sync():
+	if chunks_to_sync.is_empty():
+		_prepare_full_map_sync()
+		
+	if not chunks_to_sync.is_empty():
+		var chunk_pos = chunks_to_sync[0]
+		var updates = {
+			"terrain": {},
+			"resources": {}
+		}
+		
+		# Get all tiles in this chunk
+		var start_x = chunk_pos.x * chunk_size.x
+		var start_y = chunk_pos.y * chunk_size.y
+		var end_x = start_x + chunk_size.x
+		var end_y = start_y + chunk_size.y
+		
+		for x in range(start_x, end_x):
+			for y in range(start_y, end_y):
+				var pos = Vector2i(x, y)
+				if terrain_data.has(pos):
+					updates.terrain[pos] = terrain_data[pos]
+				if resource_data.has(pos):
+					updates.resources[pos] = resource_data[pos]
+		
+		if not updates.terrain.is_empty() or not updates.resources.is_empty():
+			print("[Server] Sending initial sync for chunk: ", chunk_pos, " updates: ", updates)
+			_apply_chunk_updates.rpc(updates)
+		
+		chunks_to_sync.remove_at(0)
+		if chunks_to_sync.is_empty():
+			initial_sync_complete = true
+			print("[Server] Initial sync complete")

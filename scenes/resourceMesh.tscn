@@ -63,6 +63,6 @@ tile_set = SubResource("TileSet_dhg5i")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_interval = 0.2
-delta_interval = 0.1
+delta_interval = 0.01
 replication_config = SubResource("SceneReplicationConfig_7ydfd")
 visibility_update_mode = 1
