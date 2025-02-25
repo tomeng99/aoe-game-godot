@@ -1,0 +1,67 @@
+[gd_scene load_steps=14 format=3 uid="uid://bseifa0o1qyfy"]
+
+[ext_resource type="Script" path="res://scripts/resource_mesh.gd" id="1_rrr1a"]
+[ext_resource type="Texture2D" uid="uid://dsohcnf1pue0p" path="res://resources/gold.png" id="1_wyk31"]
+[ext_resource type="Texture2D" uid="uid://curms3lih3rmv" path="res://resources/iron.png" id="2_0p43y"]
+[ext_resource type="Texture2D" uid="uid://6smko87ujsde" path="res://resources/grass.png" id="3_yi1w5"]
+[ext_resource type="Texture2D" uid="uid://bel6we76qr3va" path="res://resources/water.png" id="4_h35y2"]
+[ext_resource type="Texture2D" uid="uid://odlswfsn522h" path="res://resources/sand.png" id="5_fiuhq"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_af5g8"]
+resource_name = "gold"
+texture = ExtResource("1_wyk31")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xaiiu"]
+resource_name = "iron"
+texture = ExtResource("2_0p43y")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cct6r"]
+resource_name = "grass"
+texture = ExtResource("3_yi1w5")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kidd7"]
+resource_name = "water"
+texture = ExtResource("4_h35y2")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4buex"]
+resource_name = "sand"
+texture = ExtResource("5_fiuhq")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_dhg5i"]
+sources/0 = SubResource("TileSetAtlasSource_af5g8")
+sources/1 = SubResource("TileSetAtlasSource_xaiiu")
+sources/2 = SubResource("TileSetAtlasSource_cct6r")
+sources/3 = SubResource("TileSetAtlasSource_kidd7")
+sources/4 = SubResource("TileSetAtlasSource_4buex")
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7ydfd"]
+properties/0/path = NodePath(".:resource_updates")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:terrain_updates")
+properties/1/spawn = true
+properties/1/replication_mode = 0
+
+[node name="ResourceMesh" type="TileMapLayer"]
+z_index = -1
+tile_set = SubResource("TileSet_dhg5i")
+script = ExtResource("1_rrr1a")
+terrain_data = null
+terrain_updates = null
+resource_data = null
+resource_updates = null
+tracked_characters = null
+total_resource_amount = null
+required_time = null
+map_size = null
+noise_scale = null
+gold_threshold = null
+iron_threshold = null
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_7ydfd")

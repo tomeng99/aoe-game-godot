@@ -1,0 +1,34 @@
+[gd_scene load_steps=8 format=3 uid="uid://bseifa0o1qyfy"]
+
+[ext_resource type="Script" path="res://scripts/resource_mesh.gd" id="1_rrr1a"]
+[ext_resource type="Texture2D" uid="uid://dsohcnf1pue0p" path="res://resources/gold.png" id="1_wyk31"]
+[ext_resource type="Texture2D" uid="uid://curms3lih3rmv" path="res://resources/iron.png" id="2_0p43y"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_af5g8"]
+resource_name = "gold"
+texture = ExtResource("1_wyk31")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xaiiu"]
+resource_name = "iron"
+texture = ExtResource("2_0p43y")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_dhg5i"]
+sources/0 = SubResource("TileSetAtlasSource_af5g8")
+sources/1 = SubResource("TileSetAtlasSource_xaiiu")
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7ydfd"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:resource_updates")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
+[node name="ResourceMesh" type="TileMapLayer"]
+tile_set = SubResource("TileSet_dhg5i")
+script = ExtResource("1_rrr1a")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_7ydfd")
