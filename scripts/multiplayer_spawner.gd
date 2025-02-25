@@ -1,8 +1,21 @@
 extends Node
 
+func _ready():
+	if multiplayer.is_server():
+		multiplayer.peer_connected.connect(_on_peer_connected)
+
+func _on_peer_connected(id: int):
+	if multiplayer.is_server():
+		print("New client connected, syncing existing characters...")
+		# Get the characters node
+		var characters = get_tree().get_root().get_node_or_null("/root/Menu/characters")
+		if characters:
+			# Sync all existing characters to the new client
+			for character in characters.get_children():
+				rpc_id(id, "rpc_add_character", character.global_position, character.get_multiplayer_authority())
+
 @rpc("any_peer", "call_local")
 func rpc_request_spawn(position, authority):
-	# check if allowed to do stuff?
 	print("rpc_request_spawn called with position:", position, " authority:", authority)
 	if multiplayer.is_server():
 		print("Server received spawn request, calling rpc_add_character")
@@ -29,7 +42,7 @@ func _spawn_character(position, authority):
 	scene_instance.global_position = position
 	scene_instance.set_multiplayer_authority(authority)
 	characters.add_child(scene_instance)
-	print("Character spawned successfully for plsayer:", authority)
+	print("Character spawned successfully for player:", authority)
 
 @rpc("any_peer", "call_local")
 func rpc_request_delete(char_path: NodePath, authority):

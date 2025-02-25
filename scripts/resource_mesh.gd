@@ -32,6 +32,8 @@ var noise = FastNoiseLite.new()
 var resource_tile_ids: Dictionary = {}
 
 func _ready():
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	
 	if multiplayer.is_server():
 		print("Server is generating the map...")
 		noise.seed = randi()
@@ -405,3 +407,11 @@ func _handle_initial_sync():
 		if chunks_to_sync.is_empty():
 			initial_sync_complete = true
 			print("[Server] Initial sync complete")
+
+func _on_peer_connected(id: int):
+	if multiplayer.is_server():
+		print("New client connected: ", id, ", preparing sync...")
+		# Prepare sync for this specific client
+		_prepare_full_map_sync()
+		# Start syncing chunks
+		_handle_initial_sync()
