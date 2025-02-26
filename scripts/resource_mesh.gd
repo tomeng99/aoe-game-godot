@@ -23,11 +23,8 @@ var chunks_to_sync: Array = []
 
 var noise = FastNoiseLite.new()
 
-@export var map_size: Vector2i = Vector2i(100, 50)
+@export var map_size: Vector2i = Vector2i(100, 100)
 @export var noise_scale: float = 5.0
-
-@export var gold_threshold: float = 0.1
-@export var iron_threshold: float = 0.0
 
 var resource_tile_ids: Dictionary = {}
 
