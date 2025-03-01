@@ -183,14 +183,12 @@ func load_tile_ids():
 
 	resource_tile_ids.clear()
 
-	for source_id in tile_map_set.get_source_count():
-		print(source_id)
-		var tile_source = tile_map_set.get_source(source_id)
-		if tile_source and tile_source.resource_name:
-			resource_tile_ids[tile_source.resource_name.to_lower()] = {
-				"source_id": source_id,
-				"tile_index": 0
-			}
+	resource_tile_ids["grass"] = Vector2i(6, 8)
+	resource_tile_ids["water"] = Vector2i(4, 8)
+	resource_tile_ids["sand"] = Vector2i(4, 9)
+	resource_tile_ids["iron"] = Vector2i(3, 7)
+	resource_tile_ids["gold"] = Vector2i(2, 7)
+	resource_tile_ids["house"] = Vector2i(6, 6)
 
 func generate_terrain():
 	print("Generating terrain...")
@@ -205,10 +203,10 @@ func generate_terrain():
 			elif noise_value < 0.0:  # Beaches
 				tile_type = "sand"
 			
-			var tile_data = resource_tile_ids.get(tile_type, null)
-			if tile_data != null:
-				terrain_layer.set_cell(tile_position, tile_data["source_id"], Vector2i(tile_data["tile_index"], 0))
-				terrain_data[tile_position] = {"source_id": tile_data["source_id"], "atlas_coords": Vector2i(tile_data["tile_index"], 0)}
+			var tile_index = resource_tile_ids.get(tile_type, null)
+			if tile_index != null:
+				terrain_layer.set_cell(tile_position, 1, tile_index)
+				terrain_data[tile_position] = { "source_id": 1, "atlas_coords": tile_index }
 				queue_update(tile_position, terrain_data[tile_position], true)
 
 	# Add sand borders around water
@@ -224,8 +222,8 @@ func generate_terrain():
 	# Apply sand borders
 	for pos in water_borders:
 		var sand_data = resource_tile_ids["sand"]
-		terrain_layer.set_cell(pos, sand_data["source_id"], Vector2i(sand_data["tile_index"], 0))
-		terrain_data[pos] = {"source_id": sand_data["source_id"], "atlas_coords": Vector2i(sand_data["tile_index"], 0)}
+		terrain_layer.set_cell(pos, 1, sand_data)
+		terrain_data[pos] = { "source_id": 1, "atlas_coords": sand_data }
 		queue_update(pos, terrain_data[pos], true)
 
 func spawn_resources_clusters(resource_noise: FastNoiseLite):
@@ -298,19 +296,19 @@ func spawn_resources_clusters(resource_noise: FastNoiseLite):
 func _spawn_resource(resource_type: String, tile_position: Vector2i):
 	var tile_data = resource_tile_ids.get(resource_type, null)
 	if tile_data != null:
-		resource_layer.set_cell(tile_position, tile_data["source_id"], Vector2i(tile_data["tile_index"], 0))
+		resource_layer.set_cell(tile_position, 1, tile_data)
 		resource_data[tile_position] = {
-			"source_id": tile_data["source_id"],
-			"atlas_coords": Vector2i(tile_data["tile_index"], 0),
+			"source_id": 1,
+			"atlas_coords": tile_data,
 			"remaining": total_resource_amount
 		}
 		queue_update(tile_position, resource_data[tile_position], false)
 
 func _is_water_tile(pos: Vector2i) -> bool:
-	return terrain_data.has(pos) and terrain_data[pos]["source_id"] == resource_tile_ids["water"]["source_id"]
+	return terrain_data.has(pos) and terrain_data[pos]["atlas_coords"] == resource_tile_ids["water"]
 
 func _is_sand_tile(pos: Vector2i) -> bool:
-	return terrain_data.has(pos) and terrain_data[pos]["source_id"] == resource_tile_ids["sand"]["source_id"]
+	return terrain_data.has(pos) and terrain_data[pos]["atlas_coords"] == resource_tile_ids["sand"]
 
 func _get_neighbors(pos: Vector2i) -> Array:
 	return [

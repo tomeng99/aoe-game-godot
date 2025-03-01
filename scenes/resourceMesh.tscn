@@ -17,6 +17,12 @@ texture_region_size = Vector2i(32, 16)
 6:6/size_in_atlas = Vector2i(1, 2)
 6:6/0 = 0
 6:6/0/texture_origin = Vector2i(0, 8)
+3:7/size_in_atlas = Vector2i(1, 2)
+3:7/0 = 0
+3:7/0/texture_origin = Vector2i(0, 8)
+2:7/size_in_atlas = Vector2i(1, 2)
+2:7/0 = 0
+2:7/0/texture_origin = Vector2i(0, 8)
 
 [sub_resource type="TileSet" id="TileSet_dhg5i"]
 tile_shape = 1
