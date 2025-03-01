@@ -184,6 +184,7 @@ func load_tile_ids():
 	resource_tile_ids.clear()
 
 	for source_id in tile_map_set.get_source_count():
+		print(source_id)
 		var tile_source = tile_map_set.get_source(source_id)
 		if tile_source and tile_source.resource_name:
 			resource_tile_ids[tile_source.resource_name.to_lower()] = {

@@ -1,43 +1,27 @@
-[gd_scene load_steps=14 format=3 uid="uid://bseifa0o1qyfy"]
+[gd_scene load_steps=6 format=3 uid="uid://bseifa0o1qyfy"]
 
 [ext_resource type="Script" path="res://scripts/resource_mesh.gd" id="1_rrr1a"]
-[ext_resource type="Texture2D" uid="uid://dsohcnf1pue0p" path="res://resources/gold.png" id="1_wyk31"]
-[ext_resource type="Texture2D" uid="uid://curms3lih3rmv" path="res://resources/iron.png" id="2_5vkxc"]
-[ext_resource type="Texture2D" uid="uid://6smko87ujsde" path="res://resources/grass.png" id="3_2xyqt"]
-[ext_resource type="Texture2D" uid="uid://bel6we76qr3va" path="res://resources/water.png" id="4_h35y2"]
-[ext_resource type="Texture2D" uid="uid://odlswfsn522h" path="res://resources/sand.png" id="5_fiuhq"]
+[ext_resource type="Texture2D" uid="uid://bfaa8jyygwmca" path="res://resources/minions.png" id="2_jmv3w"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_af5g8"]
-resource_name = "gold"
-texture = ExtResource("1_wyk31")
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5vhkw"]
-resource_name = "iron"
-texture = ExtResource("2_5vkxc")
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kidd7"]
-resource_name = "grass"
-texture = ExtResource("3_2xyqt")
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4buex"]
-resource_name = "water"
-texture = ExtResource("4_h35y2")
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckm4"]
-resource_name = "sand"
-texture = ExtResource("5_fiuhq")
-0:0/0 = 0
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mpk0c"]
+resource_name = "Terrain"
+texture = ExtResource("2_jmv3w")
+texture_region_size = Vector2i(32, 16)
+4:9/0 = 0
+4:9/0/z_index = -1
+4:8/next_alternative_id = 3
+4:8/0 = 0
+4:8/0/z_index = -1
+6:8/0 = 0
+6:8/0/z_index = -1
+6:6/size_in_atlas = Vector2i(1, 2)
+6:6/0 = 0
+6:6/0/texture_origin = Vector2i(0, 8)
 
 [sub_resource type="TileSet" id="TileSet_dhg5i"]
-sources/0 = SubResource("TileSetAtlasSource_af5g8")
-sources/1 = SubResource("TileSetAtlasSource_5vhkw")
-sources/2 = SubResource("TileSetAtlasSource_kidd7")
-sources/3 = SubResource("TileSetAtlasSource_4buex")
-sources/4 = SubResource("TileSetAtlasSource_5ckm4")
+tile_shape = 1
+tile_size = Vector2i(32, 16)
+sources/1 = SubResource("TileSetAtlasSource_mpk0c")
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7ydfd"]
 properties/0/path = NodePath(".:current_chunk_updates")
@@ -59,6 +43,7 @@ tile_set = SubResource("TileSet_dhg5i")
 
 [node name="ResourceMesh_Resource" type="TileMapLayer" parent="."]
 z_index = -1
+y_sort_enabled = true
 tile_set = SubResource("TileSet_dhg5i")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
