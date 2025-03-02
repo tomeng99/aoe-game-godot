@@ -33,13 +33,13 @@ func _ready():
 	
 	if multiplayer.is_server():
 		print("Server is generating the map...")
-		noise.seed = randi()
+		noise.seed = 0923123123132 # later randi()
 		noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 		noise.frequency = 0.05  # For terrain
 		
 		# Create separate noise for resources
 		var resource_noise = FastNoiseLite.new()
-		resource_noise.seed = randi()  # Different seed than terrain
+		resource_noise.seed = 12312312343132 # later randi() Different seed than terrain
 		resource_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 		resource_noise.frequency = 0.2  # Higher frequency for smaller clusters
 		

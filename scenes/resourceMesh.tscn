@@ -1,7 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://bseifa0o1qyfy"]
+[gd_scene load_steps=9 format=3 uid="uid://bseifa0o1qyfy"]
 
 [ext_resource type="Script" path="res://scripts/resource_mesh.gd" id="1_rrr1a"]
 [ext_resource type="Texture2D" uid="uid://bfaa8jyygwmca" path="res://resources/minions.png" id="2_jmv3w"]
+[ext_resource type="Script" path="res://scenes/resource_mesh_terrain.gd" id="3_0e6kn"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_7kksr"]
+vertices = PackedVector2Array(16, 0, 0, 8, -16, 0, 0, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, -8, -16, 0, 0, 8, 16, 0)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3mvcl"]
+vertices = PackedVector2Array(16, 0, 0, 8, -16, 0, 0, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, -8, -16, 0, 0, 8, 16, 0)])
+agent_radius = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mpk0c"]
 resource_name = "Terrain"
@@ -9,6 +22,7 @@ texture = ExtResource("2_jmv3w")
 texture_region_size = Vector2i(32, 16)
 4:9/0 = 0
 4:9/0/z_index = -1
+4:9/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_3mvcl")
 6:6/size_in_atlas = Vector2i(1, 2)
 6:6/next_alternative_id = 2
 6:6/0 = 0
@@ -35,11 +49,13 @@ texture_region_size = Vector2i(32, 16)
 4:4/animation_frame_1/duration = 15.0
 4:4/0 = 0
 4:4/0/z_index = -1
+4:4/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_7kksr")
 
 [sub_resource type="TileSet" id="TileSet_dhg5i"]
 tile_shape = 1
 tile_size = Vector2i(32, 16)
 physics_layer_0/collision_layer = 1
+navigation_layer_0/layers = 1
 sources/1 = SubResource("TileSetAtlasSource_mpk0c")
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7ydfd"]
@@ -59,6 +75,7 @@ script = ExtResource("1_rrr1a")
 [node name="ResourceMesh_Terrain" type="TileMapLayer" parent="."]
 z_index = -2
 tile_set = SubResource("TileSet_dhg5i")
+script = ExtResource("3_0e6kn")
 
 [node name="ResourceMesh_Resource" type="TileMapLayer" parent="."]
 z_index = -1
