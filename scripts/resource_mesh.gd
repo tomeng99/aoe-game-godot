@@ -183,8 +183,8 @@ func load_tile_ids():
 
 	resource_tile_ids.clear()
 
-	resource_tile_ids["grass"] = Vector2i(6, 8)
-	resource_tile_ids["water"] = Vector2i(4, 8)
+	resource_tile_ids["grass"] = Vector2i(4, 4)
+	resource_tile_ids["water"] = Vector2i(4, 3)
 	resource_tile_ids["sand"] = Vector2i(4, 9)
 	resource_tile_ids["iron"] = Vector2i(3, 7)
 	resource_tile_ids["gold"] = Vector2i(2, 7)
