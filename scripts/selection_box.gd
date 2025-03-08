@@ -6,8 +6,12 @@ var selecting: bool = false
 var selected_characters: Array = []
 
 @onready var selection_box: ColorRect = $Control/SelectionBox
+@onready var terrain_info_display = $Control/TerrainInfoDisplay
 @onready var characters_node: Node2D  # The parent node where new characters will be added
 @export var player_scene: PackedScene # The parent node where new characters will be added
+
+var last_clicked_position: Vector2i = Vector2i(0, 0)
+var resource_mesh: Node2D = null
 
 func _ready():
 	# Auto-locate the spawner when the player is created
@@ -20,6 +24,9 @@ func _ready():
 		push_error("MultiplayerSpawner not found at path: " + spawner_path)
 	if !is_multiplayer_authority():
 		get_node("Control").visible = false;
+	
+	# Find the resource mesh
+	resource_mesh = get_tree().get_root().get_node_or_null("/root/Menu/ResourceMesh")
 
 @onready var spawner: Node
 
@@ -38,10 +45,12 @@ func handle_input(event):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				start_selection(event.position)
+				update_terrain_info(event.position)
 			else:
 				end_selection(event.position)
 		elif event.button_index == MOUSE_BUTTON_RIGHT and not selecting and event.pressed:
 			move_selected_characters(event.position)
+			update_terrain_info(event.position)
 
 	if event is InputEventMouseMotion and selecting:
 		update_selection(event.position)
@@ -109,7 +118,6 @@ func get_selection_rect() -> Rect2:
 
 func move_selected_characters(target_position: Vector2):
 	var world_target = get_global_mouse_position()
-	print("Moving characters to:", world_target)
 
 	for character in selected_characters:
 		character.move_to(world_target)
@@ -138,3 +146,51 @@ func _on_button_pressed():
 
 func delete_char(char):
 	spawner.rpc_request_delete(char, multiplayer.get_unique_id())
+
+func update_terrain_info(world_position: Vector2):
+	if resource_mesh:
+		# Convert global position to local position in the resource mesh
+		var local_position = resource_mesh.to_local(world_position)
+		
+		# Get the tile position from the local position
+		var tile_position = resource_mesh.get_node("ResourceMesh_Terrain").local_to_map(local_position)
+		last_clicked_position = tile_position
+		
+		# Get terrain and resource information
+		var terrain_type = get_terrain_type_at(tile_position)
+		var resource_type = get_resource_type_at(tile_position)
+		
+		# Update the terrain info display
+		terrain_info_display.update_info(terrain_type, resource_type, tile_position)
+
+func get_terrain_type_at(tile_position: Vector2i) -> String:
+	if not resource_mesh:
+		return "Unknown"
+	
+	# Check if the position has terrain data
+	if resource_mesh.terrain_data.has(tile_position):
+		var atlas_coords = resource_mesh.terrain_data[tile_position].atlas_coords
+		# Compare with known resource tile IDs
+		if atlas_coords == resource_mesh.resource_tile_ids["grass"]:
+			return "Grass"
+		elif atlas_coords == resource_mesh.resource_tile_ids["water"]:
+			return "Water"
+		elif atlas_coords == resource_mesh.resource_tile_ids["sand"]:
+			return "Sand"
+	
+	return "Unknown"
+
+func get_resource_type_at(tile_position: Vector2i) -> String:
+	print("huh")
+	if not resource_mesh:
+		return "None"
+	
+	# Check if the position has resource data
+	if resource_mesh.resource_data.has(tile_position):
+		var atlas_coords = resource_mesh.resource_data[tile_position].atlas_coords
+		if atlas_coords == resource_mesh.resource_tile_ids["iron"]:
+			return "Iron"
+		elif atlas_coords == resource_mesh.resource_tile_ids["gold"]:
+			return "Gold"
+#	
+	return "None"

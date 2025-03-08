@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c6ye8nk3emdak"]
+[gd_scene load_steps=4 format=3 uid="uid://c6ye8nk3emdak"]
 
 [ext_resource type="Script" path="res://scripts/camera_2d.gd" id="1_rsto3"]
 [ext_resource type="Script" path="res://scripts/selection_box.gd" id="2_3f5gh"]
+[ext_resource type="PackedScene" path="res://scenes/TerrainInfoDisplay.tscn" id="3_3jqgb"]
 
 [node name="Player" type="Node2D"]
 script = ExtResource("2_3f5gh")
@@ -21,6 +22,13 @@ metadata/_edit_use_anchors_ = true
 layout_mode = 0
 color = Color(0, 0.198906, 0.198906, 0.145098)
 metadata/_edit_use_anchors_ = true
+
+[node name="TerrainInfoDisplay" parent="Control" instance=ExtResource("3_3jqgb")]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 545.0
+offset_right = 204.0
+offset_bottom = 645.0
 
 [node name="Button" type="Button" parent="."]
 offset_right = 8.0
