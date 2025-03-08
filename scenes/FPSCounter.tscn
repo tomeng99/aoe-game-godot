@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8j6y8o3yv1kk"]
+
+[ext_resource type="Script" path="res://scripts/fps_counter.gd" id="1_0jvtd"]
+
+[node name="FPSCounter" type="Label"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_right = 0.0
+offset_bottom = 26.0
+grow_horizontal = 0
+text = "FPS: 60"
+horizontal_alignment = 2
+script = ExtResource("1_0jvtd")

@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var terrain_layer: TileMapLayer = $"ResourceMesh_Terrain"
 @onready var resource_layer: TileMapLayer = $"ResourceMesh_Resource"
+@onready var shadow_layer: TileMapLayer = $"ResourceMesh_Shadow"
 @onready var multiplayer_synchronizer: MultiplayerSynchronizer = $MultiplayerSynchronizer
 
 @export var terrain_data: Dictionary = {}
@@ -28,11 +29,16 @@ var noise = FastNoiseLite.new()
 
 var resource_tile_ids: Dictionary = {}
 
+# Shadow offset (light from upper-left corner)
+# Using a half-tile offset for resources
+var shadow_offset = Vector2i(0, 0)
+var shadow_position_offset = Vector2(8, 4)  # Half a tile in isometric coordinates
+
 func _ready():
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	
 	if multiplayer.is_server():
-		print("Server is generating the map...")
+		# Server is generating the map
 		noise.seed = 0923123123132 # later randi()
 		noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 		noise.frequency = 0.05  # For terrain
@@ -50,7 +56,8 @@ func _ready():
 		# Prepare initial sync
 		_prepare_full_map_sync()
 	else:
-		print("Client is waiting for map sync...")
+		# Client is waiting for map sync
+		load_tile_ids()
 
 	var sync_timer = Timer.new()
 	sync_timer.wait_time = 0.1
@@ -67,7 +74,6 @@ func _ready():
 
 func queue_update(pos: Vector2i, data: Dictionary, is_terrain: bool = true):
 	var chunk_pos = Vector2i(pos.x / chunk_size.x, pos.y / chunk_size.y)
-	print("[Server] Queueing update for chunk: ", chunk_pos, " tile: ", pos, " data: ", data)
 	
 	if not pending_updates.has(chunk_pos):
 		pending_updates[chunk_pos] = {"terrain": {}, "resources": {}}
@@ -78,7 +84,6 @@ func queue_update(pos: Vector2i, data: Dictionary, is_terrain: bool = true):
 		pending_updates[chunk_pos]["terrain"][pos] = data
 	else:
 		pending_updates[chunk_pos]["resources"][pos] = data
-		print("[Server] Added resource update to pending updates: ", pending_updates[chunk_pos])
 
 func _physics_process(delta):
 	if not multiplayer.is_server():
@@ -92,7 +97,6 @@ func _physics_process(delta):
 	if not dirty_chunks.is_empty():
 		var chunk_pos = dirty_chunks[0]
 		if pending_updates.has(chunk_pos):
-			print("[Server] Sending updates for chunk: ", chunk_pos, " updates: ", pending_updates[chunk_pos])
 			_apply_chunk_updates.rpc(pending_updates[chunk_pos])
 			pending_updates.erase(chunk_pos)
 		dirty_chunks.remove_at(0)
@@ -114,7 +118,6 @@ func _process_chunk_updates():
 		_sync_chunk(chunk_pos)
 		if chunks_to_sync.is_empty():
 			initial_sync_complete = true
-			print("✅ Initial map sync complete!")
 	elif not dirty_chunks.is_empty():
 		# Handle regular updates
 		var chunk_pos = dirty_chunks.pop_front()
@@ -155,7 +158,7 @@ func _process(_delta):
 
 @rpc("any_peer", "call_local", "reliable")
 func _apply_chunk_updates(updates: Dictionary):
-	print("Applying chunk updates for client....")
+	# Applying chunk updates for client
 	if updates.has("terrain"):
 		for pos in updates.terrain:
 			terrain_data[pos] = updates.terrain[pos]
@@ -166,14 +169,14 @@ func _apply_chunk_updates(updates: Dictionary):
 		for pos in updates.resources:
 			var data = updates.resources[pos]
 			if data.source_id == -1:
-				# Resource was removed
 				resource_layer.erase_cell(pos)
+				shadow_layer.erase_cell(pos + shadow_offset)
 				if pos in resource_data:
 					resource_data.erase(pos)
 			else:
-				# Resource was updated or added
 				resource_data[pos] = data
 				resource_layer.set_cell(pos, data.source_id, data.atlas_coords)
+				shadow_layer.set_cell(pos + shadow_offset, data.source_id, data.atlas_coords)
 
 func load_tile_ids():
 	var tile_map_set = terrain_layer.tile_set
@@ -191,7 +194,7 @@ func load_tile_ids():
 	resource_tile_ids["house"] = Vector2i(6, 6)
 
 func generate_terrain():
-	print("Generating terrain...")
+	# Generating terrain
 	for x in range(map_size.x):
 		for y in range(map_size.y):
 			var tile_position = Vector2i(x, y)
@@ -227,7 +230,7 @@ func generate_terrain():
 		queue_update(pos, terrain_data[pos], true)
 
 func spawn_resources_clusters(resource_noise: FastNoiseLite):
-	print("Spawning resource clusters...")
+	# Spawning resource clusters
 	var gold_count = 0
 	var iron_count = 0
 	
@@ -291,17 +294,21 @@ func spawn_resources_clusters(resource_noise: FastNoiseLite):
 				
 				existing_clusters.append(tile_position)
 	
-	print("Resource spawning complete - Gold: ", gold_count, ", Iron: ", iron_count)
+	# Resource spawning complete - Gold and Iron counts
 
 func _spawn_resource(resource_type: String, tile_position: Vector2i):
 	var tile_data = resource_tile_ids.get(resource_type, null)
 	if tile_data != null:
+		# Place the resource
 		resource_layer.set_cell(tile_position, 1, tile_data)
+		shadow_layer.set_cell(tile_position + shadow_offset, 1, tile_data)
+		
 		resource_data[tile_position] = {
 			"source_id": 1,
 			"atlas_coords": tile_data,
 			"remaining": total_resource_amount
 		}
+		
 		queue_update(tile_position, resource_data[tile_position], false)
 
 func _is_water_tile(pos: Vector2i) -> bool:
@@ -363,8 +370,10 @@ func update_scoreboard(player: Node2D):
 			points_node.text = str(int(points_node.text) + 1)
 
 func remove_resource(tile_position: Vector2i):
-	# Clear the resource tile
 	resource_layer.set_cell(tile_position, -1)
+	
+	shadow_layer.erase_cell(tile_position + shadow_offset)
+	
 	queue_update(tile_position, {"source_id": -1}, false)
 
 	if tile_position in resource_data:
@@ -396,18 +405,14 @@ func _handle_initial_sync():
 					updates.resources[pos] = resource_data[pos]
 		
 		if not updates.terrain.is_empty() or not updates.resources.is_empty():
-			print("[Server] Sending initial sync for chunk: ", chunk_pos, " updates: ", updates)
 			_apply_chunk_updates.rpc(updates)
 		
 		chunks_to_sync.remove_at(0)
 		if chunks_to_sync.is_empty():
 			initial_sync_complete = true
-			print("[Server] Initial sync complete")
 
 func _on_peer_connected(id: int):
 	if multiplayer.is_server():
-		print("New client connected: ", id, ", preparing sync...")
-		# Prepare sync for this specific client
+		# New client connected, preparing sync
 		_prepare_full_map_sync()
-		# Start syncing chunks
 		_handle_initial_sync()

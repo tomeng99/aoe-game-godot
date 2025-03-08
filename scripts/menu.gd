@@ -19,6 +19,9 @@ func _on_host_pressed():
 	scoreboard.global_position = Vector2(800, 100)
 	add_child(scoreboard)
 	
+	# Add FPS counter for the host
+	_add_fps_counter()
+	
 	# Then add the local player
 	_add_player(multiplayer.get_unique_id())
 	menu_bar.queue_free()  # Remove the MenuBar after logic
@@ -47,4 +50,30 @@ func _on_join_pressed():
 	var chosen_ip = $MenuBar/TextEdit.text
 	peer.create_client(chosen_ip, 25565)
 	multiplayer.multiplayer_peer = peer
+	
+	# Add FPS counter for the client
+	_add_fps_counter()
+	
 	menu_bar.queue_free()
+
+func _add_fps_counter():
+	# Add FPS counter to the UI
+	var fps_counter = preload("res://scenes/FPSCounter.tscn").instantiate()
+	
+	# Create a CanvasLayer to ensure the FPS counter is always on top
+	var canvas_layer = CanvasLayer.new()
+	canvas_layer.name = "FPSCounterLayer"
+	canvas_layer.layer = 100  # High layer value to be on top
+	
+	# Add the FPS counter to the canvas layer
+	canvas_layer.add_child(fps_counter)
+	
+	# Position the FPS counter in the top-right corner
+	fps_counter.anchor_left = 1.0
+	fps_counter.anchor_right = 1.0
+	fps_counter.offset_left = -100
+	fps_counter.offset_right = -10
+	fps_counter.offset_top = 10
+	
+	# Add the canvas layer to the scene
+	add_child(canvas_layer)

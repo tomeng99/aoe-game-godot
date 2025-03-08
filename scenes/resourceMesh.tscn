@@ -77,6 +77,12 @@ z_index = -2
 tile_set = SubResource("TileSet_dhg5i")
 script = ExtResource("3_0e6kn")
 
+[node name="ResourceMesh_Shadow" type="TileMapLayer" parent="."]
+modulate = Color(0, 0, 0, 0.25)
+z_index = -1
+position = Vector2(8, 4)
+tile_set = SubResource("TileSet_dhg5i")
+
 [node name="ResourceMesh_Resource" type="TileMapLayer" parent="."]
 z_index = -1
 y_sort_enabled = true
