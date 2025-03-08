@@ -7,38 +7,39 @@ var selected_characters: Array = []
 
 @onready var selection_box: ColorRect = $Control/SelectionBox
 @onready var terrain_info_display = $Control/TerrainInfoDisplay
-@onready var characters_node: Node2D  # The parent node where new characters will be added
-@export var player_scene: PackedScene # The parent node where new characters will be added
+@onready var tile_highlight: Line2D = $TileHighlight
+@onready var characters_node: Node2D
+@export var player_scene: PackedScene
 
 var last_clicked_position: Vector2i = Vector2i(0, 0)
 var resource_mesh: Node2D = null
 
 func _ready():
-	# Auto-locate the spawner when the player is created
 	var spawner_path = "/root/Menu/MultiplayerSpawner"  # Path includes Menu node
 	var spawner_node = get_node_or_null(spawner_path)
 	if spawner_node:
 		spawner = spawner_node
-		#print("Successfully found spawner at:", spawner_path)
 	else:
 		push_error("MultiplayerSpawner not found at path: " + spawner_path)
 	if !is_multiplayer_authority():
 		get_node("Control").visible = false;
 	
-	# Find the resource mesh
 	resource_mesh = get_tree().get_root().get_node_or_null("/root/Menu/ResourceMesh")
 
 @onready var spawner: Node
 
 func _enter_tree():
 	print(name)
-	set_multiplayer_authority(name.to_int())  # Ensure authority is set based on the player ID
+	set_multiplayer_authority(name.to_int())
+
+func _process(delta):
+	if resource_mesh and last_clicked_position != Vector2i(0, 0):
+		var world_pos = resource_mesh.get_node("ResourceMesh_Terrain").map_to_local(last_clicked_position)
+		tile_highlight.global_position = resource_mesh.to_global(world_pos)
 
 func _input(event):
-	if is_multiplayer_authority():  # Only allow input handling if this peer is the authority
+	if is_multiplayer_authority():
 		handle_input(event)
-		#print(name.to_int())
-
 
 func handle_input(event):
 	if event is InputEventMouseButton:
@@ -149,28 +150,28 @@ func delete_char(char):
 
 func update_terrain_info(world_position: Vector2):
 	if resource_mesh:
-		# Convert global position to local position in the resource mesh
-		var local_position = resource_mesh.to_local(world_position)
+		var local_position = resource_mesh.to_local(get_global_mouse_position())
 		
-		# Get the tile position from the local position
 		var tile_position = resource_mesh.get_node("ResourceMesh_Terrain").local_to_map(local_position)
 		last_clicked_position = tile_position
 		
-		# Get terrain and resource information
 		var terrain_type = get_terrain_type_at(tile_position)
 		var resource_type = get_resource_type_at(tile_position)
 		
-		# Update the terrain info display
 		terrain_info_display.update_info(terrain_type, resource_type, tile_position)
+		
+		if tile_highlight:
+			var world_pos = resource_mesh.get_node("ResourceMesh_Terrain").map_to_local(tile_position)
+			
+			tile_highlight.global_position = resource_mesh.to_global(world_pos)
+			tile_highlight.visible = true
 
 func get_terrain_type_at(tile_position: Vector2i) -> String:
 	if not resource_mesh:
 		return "Unknown"
 	
-	# Check if the position has terrain data
 	if resource_mesh.terrain_data.has(tile_position):
 		var atlas_coords = resource_mesh.terrain_data[tile_position].atlas_coords
-		# Compare with known resource tile IDs
 		if atlas_coords == resource_mesh.resource_tile_ids["grass"]:
 			return "Grass"
 		elif atlas_coords == resource_mesh.resource_tile_ids["water"]:
@@ -178,19 +179,17 @@ func get_terrain_type_at(tile_position: Vector2i) -> String:
 		elif atlas_coords == resource_mesh.resource_tile_ids["sand"]:
 			return "Sand"
 	
-	return "Unknown"
+	return "Mangler info om tile"
 
 func get_resource_type_at(tile_position: Vector2i) -> String:
-	print("huh")
 	if not resource_mesh:
 		return "None"
 	
-	# Check if the position has resource data
 	if resource_mesh.resource_data.has(tile_position):
 		var atlas_coords = resource_mesh.resource_data[tile_position].atlas_coords
 		if atlas_coords == resource_mesh.resource_tile_ids["iron"]:
 			return "Iron"
 		elif atlas_coords == resource_mesh.resource_tile_ids["gold"]:
 			return "Gold"
-#	
+	
 	return "None"

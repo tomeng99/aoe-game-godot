@@ -30,6 +30,14 @@ offset_top = 545.0
 offset_right = 204.0
 offset_bottom = 645.0
 
+[node name="TileHighlight" type="Line2D" parent="."]
+visible = false
+z_index = 5
+points = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0, 0, -8)
+width = 2.0
+default_color = Color(1, 0, 0, 0.8)
+metadata/_edit_lock_ = true
+
 [node name="Button" type="Button" parent="."]
 offset_right = 8.0
 offset_bottom = 8.0
